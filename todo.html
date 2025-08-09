@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pusat Produktivitas</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/checklist@latest"></script>
+</head>
+<body>
+
+    <div class="app-container">
+        <div id="page-notes" class="page active">
+            <header id="main-list-header">
+                <h1>Catatan</h1>
+                  <button id="archive-view-btn" title="Lihat Arsip">📑</button>
+            </header>
+            <main>
+                <div class="search-container">
+                    <input type="search" id="search-input" placeholder="Cari catatan...">
+                </div>
+                <ul id="notes-list"></ul>
+            </main>
+        </div>
+        <div id="page-habits" class="page">
+            <header><h1>Habits</h1></header>
+            <main>
+              <div id="habits-empty-state" class="active">
+                <button id="add-habit-initial-btn" class="add-habit-initial-btn">
+                  ➕
+                  <span>Tambahkan Kebiasaan Pertama Anda</span>
+                </button>
+              </div>
+              <div id="habits-grid-container">
+              </div>
+            </main>
+        </div>
+        <div id="page-calendar" class="page">
+          <header><h1>Kalender</h1></header>
+            <main>
+              <div class="calendar-container">
+                <div class="calendar-header">
+                  <button id="prev-month-btn">&lt;</button>
+                  <label for="month-picker-input" id="month-year-display"></label>
+                  <input type="month" id="month-picker-input" style="display: none;">
+                  <button id="next-month-btn">&gt;</button>
+                </div>
+                <div class="calendar-weekdays">
+                  <div>Min</div><div>Sen</div><div>Sel</div><div>Rab</div><div>Kam</div><div>Jum</div><div>Sab</div>
+                </div>
+                <div id="calendar-grid" class="calendar-grid">
+                </div>
+              </div>
+
+              <div id="daily-agenda-container" class="daily-agenda-container">
+                <h3 id="agenda-date-title">Pilih sebuah tanggal</h3>
+                <div id="agenda-list">
+                </div>
+              </div>
+            </main>
+        </div>
+        <div id="page-settings" class="page">
+    <header><h1>Pengaturan</h1></header>
+    <main>
+        <ul class="settings-list">
+            <li class="settings-item">
+                <span>Mode Gelap</span>
+                <button id="theme-toggle-settings" class="theme-toggle-button"></button>
+            </li>
+            <li class="settings-item">
+              <span>Ekspor Data</span>
+              <button id="export-data-btn" class="settings-action-btn">Ekspor</button>
+            </li>
+            <li class="settings-item">
+              <span>Impor Data</span>
+              <button id="import-data-btn" class="settings-action-btn">Impor</button>
+              <input type="file" id="import-file-input" accept=".json" style="display: none;">
+            </li>
+        </ul>
+    </main>
+</div>
+    </div>
+    <div id="page-archive" class="page">
+      <header>
+        <div class="editor-header-left">
+          <button id="back-from-archive-btn">&larr;</button>
+          <h1>Arsip</h1>
+         </div>
+      </header>
+      <main>
+        <ul id="archive-list"></ul>
+      </main>
+    </div>
+    <div id="editor-view" class="page">
+      <header>
+        <div class="editor-header-left">
+          <button id="back-button">&larr;</button>
+        </div>
+        <div class="editor-header-right"><button id="edit-note-button">Edit</button></div>
+      </header>
+      <main>
+        <input type="text" id="note-title-input" placeholder="Judul Catatan...">
+        <div id="reminder-container" class="reminder-container"></div>
+
+        <div id="custom-reminder-picker" class="custom-reminder-picker">
+
+          <div id="picker-initial-view" class="picker-view active">
+              <div class="picker-input-group">
+                <label>Tanggal</label>
+                <button id="open-calendar-btn" class="date-display-btn">
+                  <span>Pilih Tanggal...</span>
+                </button>
+              </div>
+              <div class="picker-input-group">
+                <label for="reminder-time-input">Waktu</label>
+                <input type="time" id="reminder-time-input" value="09:00">
+              </div>
+              <div class="picker-actions">
+                <button id="save-reminder-btn" class="picker-btn primary">Simpan</button>
+                <button id="cancel-reminder-btn" class="picker-btn">Batal</button>
+              </div>
+            <p id="picker-error-msg" class="picker-error"></p>
+          </div>
+
+          <div id="picker-calendar-view" class="picker-view">
+            <div class="calendar-header">
+              <button id="picker-prev-month-btn">&lt;</button>
+              <span id="picker-month-year-display">Agustus 2025</span>
+              <button id="picker-next-month-btn">&gt;</button>
+            </div>
+            <div class="calendar-weekdays">
+            <div>Min</div><div>Sen</div><div>Sel</div><div>Rab</div><div>Kam</div><div>Jum</div><div>Sab</div>
+            </div>
+            <div id="picker-calendar-grid" class="calendar-grid">
+             </div>
+            <div class="picker-actions">
+              <button id="confirm-date-btn" class="picker-btn primary">Pilih Tanggal</button>
+            </div>
+          </div>
+
+        </div>
+        <div id="note-content-editor"></div>
+      </main>
+    </div>
+    <div id="add-habit-view" class="page">
+      <header>
+        <div class="editor-header-left">
+          <button id="back-from-add-habit-btn">&larr;</button>
+        </div>
+        <h1>Kebiasaan Baru</h1>
+        <div class="editor-header-right">
+          <button id="save-habit-btn" class="picker-btn primary">Simpan</button>
+        </div>
+      </header>
+      <main>
+      <div class="form-group">
+        <label for="add-habit-name">Nama Kebiasaan</label>
+        <input type="text" id="add-habit-name" placeholder="Contoh: Membaca Buku">
+      </div>
+
+      <div class="form-group">
+        <label>Pilih Warna</label>
+        <div id="color-picker" class="color-picker">
+            <span class="color-option active" data-color="#6200ee" style="background-color:#6200ee;"></span>
+            <span class="color-option" data-color="#e91e63" style="background-color:#e91e63;"></span>
+            <span class="color-option" data-color="#ff9800" style="background-color:#ff9800;"></span>
+            <span class="color-option" data-color="#4caf50" style="background-color:#4caf50;"></span>
+            <span class="color-option" data-color="#2196f3" style="background-color:#2196f3;"></span>
+            <span class="color-option" data-color="#673ab7" style="background-color:#673ab7;"></span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Tipe Pelacakan</label>
+        <div class="radio-group">
+            <input type="radio" id="type-yesno" name="habit-type" value="yesno" checked>
+            <label for="type-yesno" class="radio-label">Ya / Tidak</label>
+            
+            <input type="radio" id="type-quant" name="habit-type" value="quantifiable">
+            <label for="type-quant" class="radio-label">Kuantitatif</label>
+        </div>
+      </div>
+
+      <div id="quant-options" class="form-group hidden">
+        <label for="add-habit-unit">Satuan (Contoh: halaman, menit, km)</label>
+        <input type="text" id="add-habit-unit" placeholder="Tulis satuan di sini...">
+      </div>
+
+      <div class="form-group">
+        <label for="add-habit-notes">Catatan (Opsional)</label>
+        <textarea id="add-habit-notes" rows="3" placeholder="Tulis detail atau motivasi pribadi..."></textarea>
+      </div>
+      </main>
+    </div>
+    <div id="habit-detail-view" class="page">
+      <header>
+        <div class="editor-header-left">
+          <button id="back-from-habit-detail-btn">&larr;</button>
+        </div>
+        <h1 id="habit-detail-title">Nama Habit</h1>
+        <div class="editor-header-right">
+          <button id="edit-habit-btn" class="header-action-btn">✏️</button>
+          <button id="delete-habit-btn" class="header-action-btn">🗑️</button>
+        </div>
+      </header>
+      <main>
+        <div class="stats-container">
+          <div class="stat-item">
+            <span id="current-streak-value" class="stat-value">0</span>
+            <span class="stat-label">🔥 Runtutan Saat Ini</span>
+          </div>
+          <div class="stat-item">
+            <span id="best-streak-value" class="stat-value">0</span>
+            <span class="stat-label">🏆 Rekor Runtutan</span>
+          </div>
+        </div>
+
+        <div class="heatmap-section">
+          <h3>Aktivitas Tahunan</h3>
+          <div id="heatmap-container"></div>
+        </div>
+
+        <div class="notes-section">
+          <h3>Catatan</h3>
+          <div id="habit-detail-notes" class="habit-notes-content">
+            </div>
+        </div>
+      </main>
+    </div>
+    
+    <nav class="bottom-navbar">
+        <button data-page="notes" class="nav-button active">📗</button>
+        <button data-page="habits" class="nav-button">📘</button>
+        <button id="main-add-button" class="nav-button-add">+</button>
+        <button data-page="calendar" class="nav-button">📅</button>
+        <button data-page="settings" class="nav-button">⚙️</button>
+    </nav>
+    <div id="add-menu-overlay" class="overlay hidden"></div>
+    <div id="add-menu-popup" class="add-menu hidden">
+        <button id="add-menu-habit-btn">
+            <span>📘</span>
+            <span>Tambah Habit</span>
+        </button>
+        <button id="add-menu-note-btn">
+            <span>📗</span>
+            <span>Tambah Catatan</span>
+        </button>
+    </div>
+    <div id="date-picker-modal" class="modal-container">
+        <div class="modal-overlay"></div>
+        <div class="picker-panel">
+            <div class="picker-header">
+                <h3>Pilih Bulan & Tahun</h3>
+            </div>
+            <div class="picker-content">
+                <div id="month-scroller" class="scroller">
+                    </div>
+                <div id="year-scroller" class="scroller">
+                    </div>
+            </div>
+            <div class="picker-footer">
+                <button id="cancel-picker-btn" class="picker-btn">Batal</button>
+                <button id="select-picker-btn" class="picker-btn primary">Pilih</button>
+            </div>
+        </div>
+    </div>
+    
+
+    <script src="script2.js"></script>
+</body>
+</html>

@@ -1,0 +1,1597 @@
+/* Import font dari Google Fonts (opsional, tapi membuat tampilan lebih baik) */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+/* --- Variabel Warna dan Pengaturan Global --- */
+:root {
+    /* Mode Gelap (Default) */
+    --primary-color: #bb86fc;
+    --background-color: #121212;
+    --surface-color: #1e1e1e;
+    --on-surface-color: #e0e0e0;
+    --on-primary-color: #000000;
+    --text-secondary-color: #a0a0a0;
+    --pinned-color: #2a2a2d;
+}
+
+body.light-mode {
+    /* Mode Terang */
+    --primary-color: #6200ee;
+    --background-color: #f5f5f5;
+    --surface-color: #ffffff;
+    --on-surface-color: #1f1f1f;
+    --on-primary-color: #ffffff;
+    --text-secondary-color: #5f5f5f;
+    --pinned-color: #eaddff;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--background-color);
+    color: var(--on-surface-color);
+    margin: 0;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* --- TATA LETAK UTAMA & SISTEM HALAMAN --- */
+.app-container {
+    padding-bottom: 80px; /* Memberi ruang agar konten tidak tertutup navbar */
+}
+
+.page {
+    display: none; /* Semua halaman disembunyikan secara default */
+}
+
+.page.active {
+    display: block; /* Hanya halaman dengan kelas .active yang tampil */
+}
+
+/* === CSS Header Global yang Konsisten === */
+header {
+    background-color: var(--surface-color);
+    padding: 15px 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.3s;
+    /* Menambahkan ini untuk beberapa layout mobile */
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 24px;
+    color: var(--primary-color);
+}
+
+.header-group-left, .header-group-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1; /* Memberi ruang yang fleksibel */
+}
+
+.header-group-right {
+    justify-content: flex-end; /* Dorong isinya ke kanan */
+}
+
+/* Tombol kembali di dalam grup */
+.header-group-left #back-from-archive-btn {
+    padding: 0;
+    color: var(--primary-color);
+    font-size: 28px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+main { padding: 20px; }
+
+
+/* --- BOTTOM NAVBAR --- */
+.bottom-navbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 65px;
+    background-color: var(--surface-color);
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 1000;
+    transition: background-color 0.3s;
+}
+
+.nav-button {
+    background: none; border: none; font-size: 28px;
+    color: var(--text-secondary-color); cursor: pointer; transition: color 0.2s, transform 0.2s;
+}
+.nav-button:active { transform: scale(0.9); }
+.nav-button.active { color: var(--primary-color); }
+
+.nav-button-add {
+    background-color: var(--primary-color);
+    color: var(--on-primary-color);
+    border: none; width: 60px; height: 60px; border-radius: 50%;
+    font-size: 36px; font-weight: 300; display: flex;
+    justify-content: center; align-items: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    cursor: pointer; transform: translateY(-20px); transition: all 0.3s;
+}
+.nav-button-add:active { transform: translateY(-20px) scale(0.95); }
+
+
+/* --- Komponen di Halaman Catatan --- */
+#theme-toggle-button {
+    background: none; border: none; cursor: pointer; color: var(--on-surface-color);
+    padding: 5px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+}
+#theme-toggle-button svg { width: 24px; height: 24px; fill: currentColor; transition: transform 0.3s ease; }
+#theme-toggle-button:active svg { transform: scale(0.85) rotate(90deg); }
+
+.search-container { margin-bottom: 20px; position: relative; }
+#search-input {
+    width: 100%; padding: 12px 20px; border-radius: 10px; border: 1px solid transparent;
+    background-color: rgba(128, 128, 128, 0.15); color: var(--on-surface-color); font-size: 16px; box-sizing: border-box;
+}
+#search-input:focus { outline: none; border-color: var(--primary-color); background-color: var(--surface-color); }
+
+#notes-list { list-style-type: none; padding: 0; margin: 0; }
+#notes-list li {
+    background-color: var(--surface-color); padding: 15px 20px; border-radius: 12px;
+    margin-bottom: 15px; cursor: pointer; transition: all 0.3s ease; display: flex;
+    justify-content: space-between; align-items: center; gap: 15px;
+}
+#notes-list li:hover { background-color: var(--pinned-color); }
+#notes-list li.pinned { background-color: var(--pinned-color); }
+.note-title {
+    flex-grow: 1; font-size: 18px; overflow: hidden; text-overflow: ellipsis;
+    white-space: nowrap; display: flex; align-items: center;
+}
+.pin-indicator { font-size: 16px; margin-right: 10px; }
+.note-controls { display: flex; align-items: center; gap: 20px; flex-shrink: 0; }
+.progress-chart {
+    width: 40px; height: 40px; border-radius: 50%; position: relative;
+    display: flex; justify-content: center; align-items: center;
+    background: conic-gradient(var(--primary-color) 0% var(--progress-percent, 0%), rgba(128, 128, 128, 0.2) 0% 100%);
+}
+.progress-chart::before {
+    content: ''; position: absolute; width: 70%; height: 70%;
+    background-color: var(--surface-color); border-radius: 50%; transition: background-color 0.3s;
+}
+.progress-chart span { position: relative; z-index: 1; font-size: 12px; font-weight: 600; }
+.delete-note-btn {
+    background: none; border: none; color: var(--error-color); font-size: 24px;
+    font-weight: bold; cursor: pointer; padding: 0; opacity: 0.7; transition: opacity 0.2s;
+}
+.delete-note-btn:hover { opacity: 1; }
+
+/* --- HALAMAN EDITOR (DIPERBARUI) --- */
+#editor-view {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: var(--background-color); z-index: 2000;
+    transform: translateX(100%); transition: transform 0.3s ease-in-out;
+    display: flex; flex-direction: column; /* Menggunakan flexbox untuk layout */
+}
+#editor-view.active { transform: translateX(0); }
+#editor-view header { flex-shrink: 0; } /* Header tidak akan menyusut */
+#editor-view main { flex-grow: 1; display: flex; flex-direction: column; } /* Main akan mengisi sisa ruang */
+
+/* --- Penataan Indikator Scroll Kustom untuk Editor (DIPERBAIKI) --- */
+/* Targetkan elemen <main> di dalam #editor-view */
+
+#editor-view main::-webkit-scrollbar {
+  width: 6px; 
+}
+
+#editor-view main::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 5px 0;
+}
+
+#editor-view main::-webkit-scrollbar-thumb {
+  background-color: var(--primary-color);
+  border-radius: 10px;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+#editor-view main::-webkit-scrollbar-thumb:hover {
+  opacity: 1;
+}
+
+/* Penargetan untuk Firefox juga diubah */
+#editor-view main {
+    /* Pastikan elemen ini bisa di-scroll */
+    overflow-y: auto; 
+    
+    /* Properti scrollbar untuk Firefox */
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-color) transparent;
+}
+
+/* Penataan Header Editor */
+.editor-header-left, .editor-header-right { display: flex; align-items: center; }
+
+#back-button {
+    background: none; border: none; color: var(--primary-color);
+    font-size: 28px; cursor: pointer; padding: 0 10px 0 0;
+}
+
+#edit-note-button {
+    background: none; border: 1px solid var(--primary-color);
+    color: var(--primary-color); padding: 5px 15px; border-radius: 20px;
+    font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+}
+#edit-note-button:hover { background-color: var(--primary-color); color: var(--on-primary-color); }
+#edit-note-button.hidden { display: none; } /* Untuk menyembunyikan tombol */
+
+/* Penataan Judul & Konten Editor */
+#note-title-input {
+    width: 100%; box-sizing: border-box; padding: 10px 0; margin-bottom: 10px;
+    background: none; border: none; border-bottom: 1px solid transparent; /* Garis bawah transparan saat read-only */
+    color: var(--on-surface-color); font-size: 22px; font-weight: 600;
+    transition: border-color 0.3s;
+}
+/* Gaya saat dalam mode edit */
+#note-title-input:not([readonly]) {
+    border-bottom: 1px solid var(--surface-color);
+}
+#note-title-input:focus { outline: none; border-bottom-color: var(--primary-color); }
+
+#note-content-editor {
+    flex-grow: 1; /* Konten akan mengisi sisa tinggi */
+    outline: none; font-size: 16px; line-height: 1.7;
+    padding-bottom: 20px; /* Jarak bawah */
+}
+/* Gaya saat dalam mode hanya baca */
+#note-content-editor[contenteditable="false"] {
+    caret-color: transparent; /* Sembunyikan kursor ketik yang berkedip */
+}
+
+/* --- PENATAAN FITUR KALENDER --- */
+.calendar-container {
+    background-color: var(--surface-color);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+#month-year-display {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: var(--on-surface-color);
+    cursor: pointer; /* Tambahkan ini */
+    padding: 5px 10px; /* Tambahkan sedikit ruang agar mudah diklik */
+    border-radius: 8px; /* Sedikit lengkungan agar lebih manis */
+    transition: background-color 0.2s; /* Efek hover */
+}
+
+#month-year-display:hover {
+    background-color: var(--pinned-color);
+}
+
+
+.calendar-header button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--primary-color);
+    cursor: pointer;
+    padding: 5px 10px;
+}
+
+.calendar-weekdays, .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+}
+
+.calendar-weekdays {
+    margin-bottom: 10px;
+    font-size: 0.8em;
+    font-weight: 600;
+    color: var(--text-secondary-color);
+}
+
+.calendar-day {
+    padding: 10px 5px;
+    font-size: 0.9em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 35px;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+}
+
+.calendar-day:hover {
+    background-color: var(--pinned-color);
+}
+
+.calendar-day.other-month {
+    color: var(--text-secondary-color);
+    opacity: 0.5;
+}
+
+.calendar-day.current-day {
+    background-color: var(--primary-color);
+    color: var(--on-primary-color);
+    font-weight: bold;
+}
+
+/* PERBAIKAN: Memastikan header kalender bisa diklik */
+#page-calendar header {
+    position: relative;
+    z-index: 1;
+}
+
+/* --- PENATAAN MODAL DATE PICKER --- */
+
+.modal-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 3000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    /* Sembunyikan secara default dengan transisi */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.modal-container.active {
+    /* Tampilkan saat aktif */
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+.picker-panel {
+    position: relative; /* Agar berada di atas overlay */
+    background-color: var(--surface-color);
+    border-radius: 16px;
+    width: 90%;
+    max-width: 350px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+
+    /* Efek muncul dari kecil ke besar */
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
+}
+
+.modal-container.active .picker-panel {
+    transform: scale(1);
+}
+
+.picker-header {
+    padding: 20px;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+    text-align: center;
+}
+
+.picker-header h3 {
+    margin: 0;
+    font-size: 1.1em;
+}
+
+.picker-content {
+    display: flex;
+    justify-content: center;
+    padding: 15px;
+    gap: 10px;
+}
+
+.scroller {
+    flex: 1;
+    height: 200px;
+    overflow-y: scroll;
+    border: 1px solid rgba(128, 128, 128, 0.2);
+    border-radius: 8px;
+    padding: 5px;
+}
+
+/* Penataan scrollbar (opsional tapi bagus) */
+.scroller::-webkit-scrollbar {
+    width: 6px;
+}
+.scroller::-webkit-scrollbar-thumb {
+    background: rgba(128, 128, 128, 0.4);
+    border-radius: 3px;
+}
+
+.scroll-item {
+    padding: 10px;
+    text-align: center;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.scroll-item:hover {
+    background-color: var(--pinned-color);
+}
+
+.scroll-item.selected {
+    background-color: var(--primary-color);
+    color: var(--on-primary-color);
+    font-weight: 600;
+}
+
+.picker-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    padding: 15px 20px;
+    border-top: 1px solid rgba(128, 128, 128, 0.2);
+}
+
+.picker-btn {
+    background: none;
+    border: 1px solid var(--text-secondary-color);
+    color: var(--on-surface-color);
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.picker-btn.primary {
+    background-color: var(--primary-color);
+    color: var(--on-primary-color);
+    border-color: var(--primary-color);
+}
+
+/* --- PENATAAN AGENDA HARIAN --- */
+
+.daily-agenda-container {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(128, 128, 128, 0.2);
+}
+
+#agenda-date-title {
+    font-size: 1.1em;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: var(--on-surface-color);
+}
+
+/* Penataan untuk setiap item di daftar agenda */
+.agenda-item {
+    background-color: var(--surface-color);
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 15px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.agenda-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.agenda-item h4 {
+    margin: 0 0 8px 0;
+    font-size: 1em;
+    font-weight: 600;
+    color: var(--on-surface-color);
+}
+
+/* Penataan untuk pratinjau/cuplikan konten */
+.agenda-item p {
+    margin: 0 0 12px 0;
+    font-size: 0.9em;
+    color: var(--text-secondary-color);
+    line-height: 1.5;
+
+    /* Trik CSS untuk membatasi teks hanya 2 baris */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.agenda-read-more {
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.9em;
+    font-weight: 600;
+    color: var(--primary-color);
+    cursor: pointer;
+}
+
+/* --- Tambahkan Blok Baru Ini --- */
+
+/* Penataan untuk wadah tanggal di editor */
+.due-date-container {
+    display: flex;
+    align-items: center;
+    background-color: var(--surface-color);
+    border-radius: 20px;
+    padding: 5px 5px 5px 12px;
+    border: 1px solid var(--surface-color);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.due-date-container:hover {
+    border-color: var(--primary-color);
+}
+
+#due-date-display {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--on-surface-color);
+}
+
+#remove-due-date-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary-color);
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-left: 8px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+}
+
+#remove-due-date-btn:hover {
+    background-color: rgba(128, 128, 128, 0.2);
+}
+
+#remove-due-date-btn.hidden {
+    display: none;
+}
+
+/* --- Tambahkan Blok Baru Ini --- */
+
+/* Penataan untuk wadah pengingat di editor */
+.reminder-container {
+    margin: 15px 0;
+    min-height: 32px; /* Memberi ruang agar layout tidak loncat */
+}
+
+/* Gaya untuk tombol 'Tambah Pengingat' */
+.add-reminder-btn {
+    background: none;
+    border: none;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary-color);
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 8px;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.add-reminder-btn:hover {
+    background-color: var(--surface-color);
+    color: var(--primary-color);
+}
+
+/* Gaya untuk 'chip' saat tanggal sudah diatur */
+.reminder-chip {
+    display: inline-flex;
+    align-items: center;
+    background-color: var(--pinned-color);
+    border: 1px solid var(--surface-color);
+    border-radius: 20px;
+    padding: 5px 5px 5px 12px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+/* Tombol 'x' untuk menghapus pengingat */
+.remove-reminder-btn {
+    background: none;
+    border: none;
+    color: var(--on-surface-color);
+    opacity: 0.7;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-left: 8px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.2s, opacity 0.2s;
+}
+
+.remove-reminder-btn:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+    opacity: 1;
+}
+
+/* --- Tambahkan Blok Ini di Akhir style.css --- */
+
+/* Penanda titik untuk tanggal yang memiliki catatan */
+.note-indicator {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    position: absolute;
+    bottom: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.calendar-day {
+    position: relative; /* Diperlukan agar indikator bisa diposisikan */
+}
+
+/* 1. Wadah Utama Picker */
+.custom-reminder-picker {
+    background-color: var(--pinned-color);
+    border: 1px solid var(--surface-color);
+    border-radius: 12px;
+    padding: 15px;
+    margin: 15px 0;
+    
+    /* Sembunyikan secara default menggunakan display */
+    display: none; 
+    
+    /* Properti untuk transisi saat muncul/hilang */
+    animation: fadeIn 0.3s ease;
+}
+
+.custom-reminder-picker.active {
+    display: block; /* Tampilkan saat aktif */
+}
+
+/* 2. Logika untuk Menukar Tampilan (Initial vs Calendar) */
+.picker-view {
+    display: none; /* Semua view disembunyikan secara default */
+    flex-direction: column;
+    gap: 15px;
+}
+
+.picker-view.active {
+    display: flex; /* Hanya view dengan kelas .active yang akan tampil */
+}
+
+/* 3. Penataan Tampilan Awal */
+.picker-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.picker-input-group label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-secondary-color);
+}
+
+.picker-input-group input,
+.date-display-btn {
+    width: 100%;
+    box-sizing: border-box; /* Agar padding tidak merusak layout */
+    background-color: var(--surface-color);
+    color: var(--on-surface-color);
+    border: 1px solid transparent;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 16px;
+    font-family: 'Poppins', sans-serif;
+    text-align: left;
+}
+
+.picker-input-group input:focus,
+.date-display-btn:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.date-display-btn {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.date-display-btn:hover {
+    background-color: rgba(128, 128, 128, 0.1);
+}
+
+.date-display-btn span {
+    display: block;
+}
+
+.picker-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 5px;
+}
+
+.picker-error {
+    font-size: 12px;
+    color: #ff6b6b; /* Warna error */
+    margin: 0;
+    text-align: right;
+    display: none; /* Sembunyikan pesan error default */
+}
+
+/* 4. Penataan Tampilan Kalender Mini */
+
+#picker-calendar-view .calendar-header {
+    margin-bottom: 10px; /* Kurangi margin bawah */
+}
+#picker-calendar-view .calendar-header span {
+    font-size: 1em; /* Sedikit perkecil font bulan & tahun */
+}
+
+#picker-calendar-view .calendar-grid {
+    gap: 2px; /* Perkecil jarak antar tanggal */
+}
+
+#picker-calendar-view .calendar-day {
+    height: 30px; /* Perkecil ukuran sel tanggal */
+    font-size: 0.8em;
+    padding: 5px;
+}
+
+/* Tambahkan style untuk tanggal yang dipilih di kalender mini */
+#picker-calendar-view .calendar-day.selected {
+    background-color: var(--primary-color);
+    color: var(--on-primary-color);
+    font-weight: bold;
+}
+
+
+#picker-calendar-view .note-indicator {
+    /* Jika Anda ingin menampilkan indikator di kalender mini juga */
+    bottom: 3px;
+    width: 4px;
+    height: 4px;
+}
+
+/* Keyframe untuk animasi fade-in (opsional, tapi bagus) */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Penataan Indikator Scroll Kustom untuk Editor --- */
+/* Targetkan elemen editor catatan secara spesifik */
+
+#note-content-editor::-webkit-scrollbar {
+  width: 6px; /* Atur lebar scrollbar */
+}
+
+#note-content-editor::-webkit-scrollbar-track {
+  /* Latar belakang track dibuat transparan atau sangat samar */
+  background: transparent;
+  margin: 5px 0; /* Beri sedikit jarak atas-bawah */
+}
+
+#note-content-editor::-webkit-scrollbar-thumb {
+  /* Ini adalah bagian utama dari scrollbar yang bergerak */
+  background-color: var(--primary-color); /* Warna akan mengikuti tema! */
+  border-radius: 10px; /* Membuatnya berbentuk pil */
+  opacity: 0.6; /* Sedikit transparan agar tidak terlalu mencolok */
+  transition: opacity 0.2s;
+}
+
+#note-content-editor::-webkit-scrollbar-thumb:hover {
+  /* Efek saat kursor mouse di atasnya (untuk mode desktop) */
+  opacity: 1;
+}
+
+/* Catatan untuk browser lain seperti Firefox */
+#note-content-editor {
+    scrollbar-width: thin; /* Membuat scrollbar lebih tipis di Firefox */
+    scrollbar-color: var(--primary-color) transparent; /* Thumb dan Track di Firefox */
+}
+/* --- 1. Tampilan Halaman Habits --- */
+
+/* Tombol besar saat halaman habits masih kosong */
+#habits-empty-state {
+    text-align: center;
+    padding-top: 50px;
+}
+
+.add-habit-initial-btn {
+    background-color: var(--surface-color);
+    border: 2px dashed var(--primary-color);
+    color: var(--primary-color);
+    border-radius: 12px;
+    padding: 30px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    width: 80%;
+    margin: auto;
+    transition: background-color 0.2s;
+}
+
+.add-habit-initial-btn:hover {
+    background-color: var(--pinned-color);
+}
+
+.add-habit-initial-btn span {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+/* Wadah untuk Grid Habit (jika sudah ada isi) */
+#habits-grid-container {
+    display: none; /* Awalnya disembunyikan, diaktifkan oleh JS */
+    color: var(--on-surface-color);
+}
+
+/* --- 2. Tampilan Halaman Form "Tambah Kebiasaan" --- */
+
+/* --- Tambahkan Blok Ini di Akhir CSS Habits --- */
+
+/* Membuat Halaman Form 'Tambah Habit' Menjadi Full-Screen Overlay */
+#add-habit-view {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--background-color);
+    z-index: 2000; /* Sama seperti editor, agar di lapisan paling atas */
+    
+    /* Efek transisi slide dari kanan, sama seperti editor */
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out;
+
+    /* Jaga agar header dan main tetap teratur di dalamnya */
+    display: flex;
+    flex-direction: column;
+}
+
+#add-habit-view.active {
+    transform: translateX(0); /* Munculkan ke layar */
+}
+
+/* Pastikan konten form di dalamnya bisa di-scroll jika layarnya kecil */
+#add-habit-view main {
+    overflow-y: auto; /* Tambahkan scroll jika kontennya panjang */
+    flex-grow: 1;     /* Pastikan <main> mengisi sisa ruang */
+}
+#back-from-add-habit-btn {
+    background: none; border: none; color: var(--primary-color);
+    font-size: 28px; cursor: pointer; padding: 0 10px 0 0;
+}
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary-color);
+}
+
+.form-group input[type="text"],
+.form-group textarea {
+    width: 100%;
+    box-sizing: border-box;
+    background-color: var(--surface-color);
+    color: var(--on-surface-color);
+    border: 1px solid var(--surface-color);
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 16px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.form-group input[type="text"]:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+/* Penataan Color Picker */
+.color-picker {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.color-option {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 3px solid transparent;
+    transition: transform 0.2s, border-color 0.2s;
+}
+
+.color-option.active {
+    border-color: var(--on-surface-color);
+    transform: scale(1.1);
+}
+
+/* Penataan Radio Button Kustom */
+.radio-group {
+    display: flex;
+    gap: 10px;
+}
+
+.radio-group input[type="radio"] {
+    display: none; /* Sembunyikan radio button asli */
+}
+
+.radio-label {
+    padding: 8px 16px;
+    border: 1px solid var(--surface-color);
+    background-color: var(--surface-color);
+    color: var(--on-surface-color);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+/* Ini adalah triknya: style label berdasarkan state radio button */
+.radio-group input[type="radio"]:checked + .radio-label {
+    background-color: var(--primary-color);
+    color: var(--on-primary-color);
+    border-color: var(--primary-color);
+    font-weight: 600;
+}
+
+/* Penataan tombol simpan di header */
+#save-habit-btn {
+    font-size: 14px;
+    padding: 6px 18px;
+}
+
+
+/* Kelas utilitas untuk menyembunyikan elemen */
+.hidden {
+    display: none !important;
+}
+
+/* --- Tambahkan di Akhir CSS Habits --- */
+
+#habits-grid-container {
+    display: grid;
+    /* 1 kolom untuk nama, 7 kolom untuk tanggal */
+    grid-template-columns: 2fr repeat(7, 1fr);
+    gap: 5px; /* Jarak antar sel */
+    padding-bottom: 20px;
+}
+
+.grid-header-cell, .grid-habit-name, .grid-data-cell {
+    background-color: var(--surface-color);
+    border-radius: 8px;
+    padding: 10px 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+}
+
+.grid-header-cell {
+    flex-direction: column;
+    font-size: 12px;
+    gap: 4px;
+    font-weight: 500;
+    color: var(--text-secondary-color);
+}
+
+.grid-habit-name {
+    justify-content: flex-start;
+    font-weight: 500;
+    text-align: left;
+    gap: 8px;
+    padding-left: 15px;
+}
+
+.color-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.grid-data-cell {
+    flex-direction: column;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.grid-data-cell:hover {
+    background-color: var(--pinned-color);
+}
+
+.grid-data-cell .unit {
+    font-size: 10px;
+    font-weight: 400;
+    color: var(--text-secondary-color);
+}
+
+/* --- Tambahkan di Akhir CSS Habits --- */
+.grid-data-cell.today {
+    border: 2px solid var(--primary-color);
+    /* Sedikit lebih menonjol */
+    transform: scale(1.05);
+}
+
+/* Lapisan Gelap di Latar Belakang */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1500; /* Di bawah pop-up, di atas segalanya */
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+.overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Menu Pop-up */
+.add-menu {
+    position: fixed;
+    bottom: 85px; /* Tepat di atas navbar */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1600; /* Di lapisan paling atas */
+    background-color: var(--surface-color);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 10px;
+    transition: all 0.3s ease;
+}
+
+.add-menu.hidden {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
+    pointer-events: none;
+}
+
+.add-menu button {
+    background: none;
+    border: none;
+    color: var(--on-surface-color);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    text-align: left;
+}
+
+.add-menu button:hover {
+    background-color: var(--pinned-color);
+}
+
+.add-menu button span:first-child {
+    font-size: 24px;
+}
+
+/* --- 1. Tata Letak Halaman Utama --- */
+#habit-detail-view {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--background-color);
+    z-index: 2100; /* Lapisan sedikit di atas editor, untuk keamanan */
+    
+    /* Efek transisi slide dari kanan */
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out;
+
+    display: flex;
+    flex-direction: column;
+}
+
+#habit-detail-view.active {
+    transform: translateX(0); /* Munculkan ke layar */
+}
+
+#habit-detail-view main {
+    overflow-y: auto; /* Pastikan konten bisa di-scroll */
+    flex-grow: 1;
+    padding: 20px;
+}
+
+/* Tombol Aksi di Header (Edit & Hapus) */
+.header-action-btn {
+    background: none;
+    border: none;
+    color: var(--on-surface-color);
+    font-size: 24px;
+    cursor: pointer;
+    padding: 5px;
+    margin-left: 10px;
+}
+
+/* --- 2. Kontainer Statistik Streak --- */
+.stats-container {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.stat-item {
+    flex: 1; /* Agar kedua item berbagi ruang secara merata */
+    background-color: var(--surface-color);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.stat-value {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.stat-label {
+    font-size: 14px;
+    color: var(--text-secondary-color);
+}
+
+/* --- 3. Wadah untuk Heatmap & Catatan --- */
+.heatmap-section,
+.notes-section {
+    margin-bottom: 30px;
+}
+
+.heatmap-section h3,
+.notes-section h3 {
+    margin: 0 0 15px 0;
+    font-size: 18px;
+    font-weight: 500;
+    border-bottom: 1px solid var(--surface-color);
+    padding-bottom: 10px;
+}
+
+#heatmap-container {
+    /* Nanti akan diisi oleh library heatmap */
+    min-height: 150px; 
+    background-color: var(--surface-color);
+    border-radius: 12px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary-color);
+    font-style: italic;
+}
+
+.habit-notes-content {
+    background-color: var(--surface-color);
+    border-radius: 12px;
+    padding: 15px;
+    min-height: 50px;
+    line-height: 1.6;
+    font-size: 15px;
+}
+#back-from-habit-detail-btn {
+    background: none; border: none; color: var(--primary-color);
+    font-size: 28px; cursor: pointer; padding: 0 10px 0 0;
+}
+
+/* CSS untuk Heatmap Kustom */
+.heatmap-scroll-wrapper {
+    overflow-x: auto; /* Memungkinkan scroll horizontal */
+    overflow-y: hidden;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    padding-bottom: 12px; /* Memberi ruang untuk scrollbar */
+    -webkit-overflow-scrolling: touch; /* Scroll lebih mulus di mobile */
+}
+
+.heatmap-month-container {
+    padding-right: 12px; /* Jarak antar bulan */
+    flex-shrink: 0;
+}
+
+.heatmap-month-label {
+    font-size: 12px;
+    margin-bottom: 5px;
+    color: var(--text-secondary-color);
+}
+
+.heatmap-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr); /* 7 kolom untuk 7 hari */
+    grid-auto-rows: 1fr;
+    gap: 2px;
+}
+
+.heatmap-cell {
+    width: 20px; /* Ukuran tetap untuk setiap kotak */
+    height: 20px;
+    background-color: var(--background-secondary-color);
+    border-radius: 3px;
+    position: relative;
+    border: 1px solid rgba(128, 128, 128, 0.2);
+}
+
+.heatmap-cell .tooltip {
+    visibility: hidden;
+    width: 180px;
+    background-color: var(--background-tertiary-color);
+    color: var(--text-primary-color);
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -90px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.heatmap-cell:hover .tooltip {
+    visibility: visible;
+    opacity: 2;
+}
+
+/* CSS untuk Date Picker Modal */
+.modal-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none; /* Sembunyi secara default */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+.modal-container.active {
+    display: flex;
+}
+.modal-overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    /* Menggunakan warna dari tema Anda */
+    background-color: var(--overlay-color, rgba(0, 0, 0, 0.6));
+}
+.picker-panel {
+    /* Menggunakan warna dari tema Anda */
+    background-color: var(--pinned-color);
+    color: var(--text-primary-color);
+    border-radius: 12px;
+    width: 90%;
+    max-width: 300px;
+    z-index: 1001;
+    overflow: hidden;
+    border: 1px solid var(--background-secondary-color);
+}
+.picker-header, .picker-footer {
+    padding: 16px;
+    text-align: center;
+}
+.picker-header h3 {
+    margin: 0;
+}
+.picker-content {
+    display: flex;
+    height: 200px;
+    border-top: 1px solid var(--background-secondary-color);
+    border-bottom: 1px solid var(--background-secondary-color);
+}
+.scroller {
+    flex: 1;
+    overflow-y: auto;
+    text-align: center;
+}
+.scroller .scroll-item {
+    padding: 12px 0;
+    cursor: pointer;
+    color: var(--text-primary-color); /* TAMBAHKAN BARIS INI */
+}
+.scroller .scroll-item.selected {
+    background-color: var(--accent-color);
+    color: white;
+    font-weight: bold;
+}
+.picker-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+.picker-btn {
+    /* Style tombol bisa disesuaikan */
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+.picker-btn.primary {
+    background-color: var(--accent-color);
+    color: white;
+}
+
+/* Penataan untuk Tampilan Baca Checklist (Read-Only) */
+.checklist-readonly {
+    padding: 10px 0;
+}
+.checklist-item-readonly {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 16px;
+    padding: 4px 0;
+}
+.checkbox-readonly {
+    font-size: 20px;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+/* Ganti/Tambahkan style ini di style.css */
+.checklist-item-readonly {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 16px;
+    padding: 4px 0;
+}
+
+/* Style untuk checkbox asli di mode baca */
+.readonly-checkbox {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary-color); /* Mewarnai centang */
+    cursor: pointer;
+}
+
+.checklist-item-readonly.checked label {
+    text-decoration: line-through;
+    color: var(--text-secondary-color);
+}
+#note-content-editor.readonly .codex-editor__redactor {
+    pointer-events: none;
+}
+
+/* Penataan Ulang untuk Daftar Catatan dengan Progress Chart */
+
+#notes-list li {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Jarak antar elemen */
+    padding: 12px 15px; /* Sedikit padding agar tidak terlalu mepet */
+}
+
+#notes-list .note-title {
+    flex-grow: 1; /* Judul akan mengambil ruang sisa */
+    font-size: 18px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#notes-list .note-widget-area {
+    flex-shrink: 0; /* Mencegah area widget menyusut */
+}
+
+/* Pastikan CSS untuk .progress-chart sudah ada (dari file awal Anda) */
+.progress-chart {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: conic-gradient(var(--primary-color) 0% var(--progress-percent, 0%), rgba(128, 128, 128, 0.2) 0% 100%);
+}
+.progress-chart::before {
+    content: '';
+    position: absolute;
+    width: 70%;
+    height: 70%;
+    background-color: var(--surface-color);
+    border-radius: 50%;
+    transition: background-color 0.3s;
+}
+.progress-chart span {
+    position: relative;
+    z-index: 1;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* Tambahkan atau ganti style ini di style.css */
+.calendar-day.selected {
+    background-color: var(--pinned-color);
+    border: 1px solid var(--primary-color);
+}
+
+/* === Penataan untuk Halaman Pengaturan === */
+
+.settings-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background-color: var(--surface-color);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.settings-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--background-color);
+    font-size: 16px;
+}
+
+.settings-item:last-child {
+    border-bottom: none;
+}
+
+.theme-toggle-button {
+    background-color: var(--background-color);
+    border: none;
+    border-radius: 20px;
+    width: 50px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+/* === Penataan untuk Tombol dan Halaman Arsip === */
+
+/* Tombol untuk melihat arsip di header utama */
+#archive-view-btn {
+    background: none;
+    border: none;
+    font-size: 24px; /* Sesuaikan ukuran ikon jika perlu */
+    cursor: pointer;
+    color: var(--on-surface-color);
+    padding: 5px;
+}
+
+/* Tombol kembali dari halaman arsip */
+#back-from-archive-btn {
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    font-size: 28px;
+    cursor: pointer;
+    padding: 0 10px 0 0;
+}
+
+/* Pastikan daftar arsip memiliki gaya yang sama dengan daftar catatan */
+#archive-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+#archive-list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 15px;
+    background-color: var(--surface-color); /* Pastikan ada background */
+    border-radius: 12px; /* Pastikan ada radius */
+    margin-bottom: 15px; /* Beri jarak antar item */
+    cursor: pointer;
+}
+/* Tambahkan style ini di style.css */
+.unarchive-btn {
+    background: none;
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.unarchive-btn:hover {
+    background-color: var(--primary-color);
+    color: var(--on-primary-color);
+}
+
+/* Penataan untuk grup header agar konsisten */
+.header-group-left {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Jarak antara tombol kembali dan judul */
+}
+.header-group-left h1 {
+    margin: 0;
+}
+/* Memastikan tombol kembali di dalam grup ini tidak terlalu besar */
+.header-group-left #back-from-archive-btn {
+    padding: 0;
+}
+
+/* Penataan untuk Tombol Aksi di Halaman Pengaturan */
+.settings-action-btn {
+    background: none;
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+    padding: 6px 18px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.settings-action-btn:hover {
+    background-color: var(--primary-color);
+    color: var(--on-primary-color);
+}
