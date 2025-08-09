@@ -1595,3 +1595,9 @@ main { padding: 20px; }
     background-color: var(--primary-color);
     color: var(--on-primary-color);
 }
+/* Penataan untuk item pengaturan yang isinya di tengah */
+.settings-item-center {
+    justify-content: center; /* Membuat isinya (tombol Trakteer) berada di tengah */
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
